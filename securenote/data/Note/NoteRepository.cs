@@ -11,7 +11,7 @@ namespace data.Notes
         }
         public async Task<Guid> CreateNote(domain.Notes.Note note)
         {
-            return await Task.Factory.StartNew(() => new Guid());
+            return await Task.Factory.StartNew(Guid.NewGuid);
         }
     }
 }

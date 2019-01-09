@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using data.Notes.Abstractions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace api.Controllers
 {
@@ -11,15 +12,17 @@ namespace api.Controllers
     public class NoteController : Controller
     {
         private readonly INoteRepository _noteRepository;
+        private readonly ILogger<NoteController> _logger;
 
-        public NoteController(INoteRepository noteRepository)
+        public NoteController(INoteRepository noteRepository, ILogger<NoteController> logger)
         {
             this._noteRepository = noteRepository;
+            this._logger = logger;
         }
 
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetMessage")]
         public async Task<ActionResult<domain.Notes.Note>> Index(string id)
         {
             var result = await _noteRepository.GetNote(id);
@@ -38,14 +41,16 @@ namespace api.Controllers
         /// <response code="400">If the message is null</response>    
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        [HttpPost("{message}")]
+        [HttpPost("{message}", Name = "CreateMessage")]
         public async Task<ActionResult<Guid>> Post(string message)
         {
             if (string.IsNullOrEmpty(message)) return BadRequest();
 
             var createdId = await _noteRepository.CreateNote(new domain.Notes.Note() { Message = message });
+            _logger.LogInformation($"created {createdId}");
 
-            if (createdId != Guid.Empty) return Created("/", createdId);
+            if (createdId != Guid.Empty) return CreatedAtRoute("GetMessage", new { id = createdId }, createdId);
+
             return BadRequest();
         }
     }
