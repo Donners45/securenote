@@ -26,7 +26,6 @@ namespace api.Controllers
         public async Task<ActionResult<domain.Notes.Note>> Index(string id)
         {
             var result = await _noteRepository.GetNote(id);
-
             if (result != null) return Ok(result);
 
             return NotFound();
@@ -38,8 +37,8 @@ namespace api.Controllers
         /// <returns>The unique identifier for the new note.</returns>
         /// <param name="message">Message.</param>
         /// <response code="201">Created note Id</response>
-        /// <response code="400">If the message is null</response>    
-        [ProducesResponseType(201)]
+        /// <response code="400">If the message is null</response>  
+        [ProducesResponseType(typeof(Guid), 201)]
         [ProducesResponseType(400)]
         [HttpPost("{message}", Name = "CreateMessage")]
         public async Task<ActionResult<Guid>> Post(string message)
@@ -47,8 +46,6 @@ namespace api.Controllers
             if (string.IsNullOrEmpty(message)) return BadRequest();
 
             var createdId = await _noteRepository.CreateNote(new domain.Notes.Note() { Message = message });
-            _logger.LogInformation($"created {createdId}");
-
             if (createdId != Guid.Empty) return CreatedAtRoute("GetMessage", new { id = createdId }, createdId);
 
             return BadRequest();
