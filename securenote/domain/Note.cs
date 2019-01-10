@@ -1,5 +1,5 @@
 ﻿using System;
-namespace domain.Notes
+namespace domain
 {
     public class Note
     {

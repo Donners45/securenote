@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using data.Notes.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using data.Notes;
+using data.Notes.Abstractions;
+using domain;
 
 namespace api.Controllers
 {
@@ -23,12 +25,14 @@ namespace api.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [HttpGet("{id}", Name = "GetMessage")]
-        public async Task<ActionResult<domain.Notes.Note>> Index(string id)
+        public async Task<ActionResult<Note>> Index(string id)
         {
             var result = await _noteRepository.GetNote(id);
-            if (result != null) return Ok(result);
 
-            return NotFound();
+            if (result == null) return NotFound();
+
+            return Ok(result);
+
         }
 
         /// <summary>
@@ -45,7 +49,12 @@ namespace api.Controllers
         {
             if (string.IsNullOrEmpty(message)) return BadRequest();
 
-            var createdId = await _noteRepository.CreateNote(new domain.Notes.Note() { Message = message });
+            var note = new Note() { Message = message };
+
+            note.IsValid()
+                .EncryptMessge();
+            
+            var createdId = await _noteRepository.CreateNote(note);
             if (createdId != Guid.Empty) return CreatedAtRoute("GetMessage", new { id = createdId }, createdId);
 
             return BadRequest();

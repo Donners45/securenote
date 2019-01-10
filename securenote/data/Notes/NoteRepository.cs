@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
-
+using domain;
 namespace data.Notes
 {
     public class NoteRepository : Abstractions.INoteRepository
     {
-        public async Task<domain.Notes.Note> GetNote(string id)
+        public async Task<Note> GetNote(string id)
         {
-            return await Task.Factory.StartNew(() => new domain.Notes.Note());
+            return await Task.Factory.StartNew(() => new Note());
         }
-        public async Task<Guid> CreateNote(domain.Notes.Note note)
+        public async Task<Guid> CreateNote(Note note)
         {
             return await Task.Factory.StartNew(Guid.NewGuid);
         }

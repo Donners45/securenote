@@ -8,8 +8,8 @@
     <Compile Remove="Class1.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Note\" />
-    <Folder Include="Note\Abstractions\" />
+    <Folder Include="Notes\" />
+    <Folder Include="Notes\Abstractions\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\domain\domain.csproj" />

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using domain.Notes;
+using domain;
 
 namespace data.Notes.Abstractions
 {
