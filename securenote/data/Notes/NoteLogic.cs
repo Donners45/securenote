@@ -1,18 +1,15 @@
 ﻿using System;
-
+using domain;
 
 namespace data.Notes
 {
-    public static class NoteValidation
+    public class NoteLogic
     {
-      public static domain.Note IsValid(this domain.Note note)
+        public Note Create(string message)
         {
-            return null;
-        }
+            if (string.IsNullOrEmpty(message)) return null;
 
-        public static domain.Note EncryptMessge(this domain.Note note)
-        {
-            return null;
+            return new Note { Message = message };
         }
     }
 }
