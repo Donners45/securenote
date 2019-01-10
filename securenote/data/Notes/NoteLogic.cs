@@ -3,7 +3,7 @@ using domain;
 
 namespace data.Notes
 {
-    public class NoteLogic
+    public class NoteLogic : INoteLogic
     {
         public Note Create(string message)
         {
