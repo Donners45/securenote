@@ -51,9 +51,6 @@ namespace api.Controllers
 
             var note = new Note() { Message = message };
 
-            note.IsValid()
-                .EncryptMessge();
-            
             var createdId = await _noteRepository.CreateNote(note);
             if (createdId != Guid.Empty) return CreatedAtRoute("GetMessage", new { id = createdId }, createdId);
 

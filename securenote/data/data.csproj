@@ -10,8 +10,18 @@
   <ItemGroup>
     <Folder Include="Notes\" />
     <Folder Include="Notes\Abstractions\" />
+    <Folder Include="Adapters\Redis\Abstractions\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\domain\domain.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="2.0.519" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Adapters\.DS_Store" />
+    <None Remove=".DS_Store" />
   </ItemGroup>
 </Project>

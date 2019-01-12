@@ -1,5 +1,6 @@
 ﻿using System;
 using domain;
+using data.Notes.Abstractions;
 
 namespace data.Notes
 {

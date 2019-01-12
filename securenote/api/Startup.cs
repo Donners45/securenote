@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using data.Adapters.Redis;
+using data.Adapters.Redis.Abstractions;
 using data.Notes;
 using data.Notes.Abstractions;
+using domain;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -18,9 +21,14 @@ namespace api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                         .SetBasePath(env.ContentRootPath)
+                         .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                         .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                         .AddEnvironmentVariables();
+            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -33,8 +41,10 @@ namespace api
             {
                 c.SwaggerDoc("v1", new Info { Title = "API Boilerplate", Version = "v1" });
             });
+            services.Configure<RedisConfiguration>(Configuration.GetSection("RedisConfiguration"));
 
             services.AddSingleton<INoteRepository, NoteRepository>();
+            services.AddTransient<IRedisConnectionFactory, RedisConnectionFactory>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
