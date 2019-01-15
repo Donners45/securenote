@@ -1,5 +1,4 @@
-﻿using System;
-namespace domain
+﻿namespace domain
 {
     public class RedisConfiguration
     {

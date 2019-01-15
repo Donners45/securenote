@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;
-using data.Notes.Abstractions;
 using data.Adapters.Redis.Abstractions;
 using domain;
 

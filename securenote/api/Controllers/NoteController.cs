@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using data.Notes.Abstractions;
 using domain;
 
@@ -12,12 +11,10 @@ namespace api.Controllers
     public class NoteController : Controller
     {
         private readonly INoteRepository _noteRepository;
-        private readonly ILogger<NoteController> _logger;
 
-        public NoteController(INoteRepository noteRepository, ILogger<NoteController> logger)
+        public NoteController(INoteRepository noteRepository)
         {
-            this._noteRepository = noteRepository;
-            this._logger = logger;
+            _noteRepository = noteRepository;
         }
 
         [ProducesResponseType(200)]
@@ -27,10 +24,7 @@ namespace api.Controllers
         {
             var result = await _noteRepository.GetNote(id);
 
-            if (result == null) return NotFound();
-
-            return Ok(result);
-
+            return result == null ? (ActionResult<Note>)NotFound() : (ActionResult<Note>)Ok(result);
         }
 
         /// <summary>
