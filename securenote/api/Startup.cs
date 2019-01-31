@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace api
 {
@@ -33,10 +34,10 @@ namespace api
             {
                 c.SwaggerDoc("v1", new Info { Title = "SecureNoteAPI", Version = "v1" });
             });
-            services.Configure<RedisConfiguration>(Configuration.GetSection("RedisConfiguration"));
 
+            services.Configure<RedisConfiguration>(Configuration.GetSection("RedisConfiguration"));
+            services.AddSingleton<IRedisConnectionFactory, RedisConnectionFactory>();
             services.AddSingleton<INoteRepository, NoteRepository>();
-            services.AddTransient<IRedisConnectionFactory, RedisConnectionFactory>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

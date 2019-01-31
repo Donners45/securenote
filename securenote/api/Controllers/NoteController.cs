@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using data.Notes.Abstractions;
 using domain;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace api.Controllers
 {
@@ -11,9 +12,11 @@ namespace api.Controllers
     public class NoteController : Controller
     {
         private readonly INoteRepository _noteRepository;
+        private readonly IDataProtector _protector;
 
-        public NoteController(INoteRepository noteRepository)
+        public NoteController(INoteRepository noteRepository, IDataProtectionProvider provider)
         {
+            _protector = provider.CreateProtector("note.protector");
             _noteRepository = noteRepository;
         }
 
@@ -24,7 +27,13 @@ namespace api.Controllers
         {
             var result = await _noteRepository.GetNote(id);
 
-            return result == null ? (ActionResult<Note>)NotFound() : (ActionResult<Note>)Ok(result);
+            if (result != null)
+            {
+                result.Message = _protector.Unprotect(result.Message);
+                return (ActionResult<Note>)Ok(result);
+            }
+
+            return (ActionResult<Note>)NotFound();
         }
 
         /// <summary>
@@ -40,6 +49,8 @@ namespace api.Controllers
         public async Task<ActionResult<Guid>> Post(string message)
         {
             if (string.IsNullOrEmpty(message)) return BadRequest();
+
+            message = _protector.Protect(message);
 
             var note = new Note() { Message = message };
 
