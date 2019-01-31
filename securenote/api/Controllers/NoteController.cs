@@ -20,7 +20,12 @@ namespace api.Controllers
             _noteRepository = noteRepository;
         }
 
-        [ProducesResponseType(200)]
+        /// <summary>
+        /// Returns a note by Id
+        /// </summary>
+        /// <returns>The note associated with Id</returns>
+        /// <param name="id">Note Identifier</param>
+        [ProducesResponseType(typeof(Note), 200)]
         [ProducesResponseType(404)]
         [HttpGet("{id}", Name = "GetMessage")]
         public async Task<ActionResult<Note>> Index(string id)
@@ -32,7 +37,6 @@ namespace api.Controllers
                 result.Message = _protector.Unprotect(result.Message);
                 return (ActionResult<Note>)Ok(result);
             }
-
             return (ActionResult<Note>)NotFound();
         }
 
@@ -40,19 +44,21 @@ namespace api.Controllers
         /// Creates a new note.
         /// </summary>
         /// <returns>The unique identifier for the new note.</returns>
-        /// <param name="message">Message.</param>
+        /// <param name="request">Message.</param>
         /// <response code="201">Created note Id</response>
         /// <response code="400">If the message is null</response>  
         [ProducesResponseType(typeof(Guid), 201)]
         [ProducesResponseType(400)]
-        [HttpPost("{message}", Name = "CreateMessage")]
-        public async Task<ActionResult<Guid>> Post(string message)
+        [HttpPost(Name = "CreateMessage")]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        public async Task<ActionResult<Guid>> Post([FromBody] MessageWrapper request)
         {
-            if (string.IsNullOrEmpty(message)) return BadRequest();
+            if (string.IsNullOrEmpty(request?.Message)) return BadRequest();
 
-            message = _protector.Protect(message);
+            var cipherText = _protector.Protect(request.Message);
 
-            var note = new Note() { Message = message };
+            var note = new Note() { Message = cipherText };
 
             var createdId = await _noteRepository.CreateNote(note);
             if (createdId != Guid.Empty) return CreatedAtRoute("GetMessage", new { id = createdId }, createdId);
